@@ -59,7 +59,7 @@ You can obtain your API key from the Hyperbolic platform (https://hyperbolic.xyz
  - Start the server:
 
 ```bash
-cd hyperbolic-backend
+cd backend
 pnpm install
 node server.js
 ```
@@ -69,3 +69,6 @@ It should run on port 5000
  ```bash
  pnpm run dev
  ```
+
+# Hosted on Internet Computer (ICP) and Vercel
+- You can access it from the url: https://33mye-ciaaa-aaaaj-azwta-cai.icp0.io/

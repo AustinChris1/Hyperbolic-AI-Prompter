@@ -14,7 +14,7 @@ const ImageGeneration = () => {
     Paint_Splash: 0,
   });
   const [controlnetImage, setControlnetImage] = useState(null); // Store ControlNet image for processing
-  const [controlnetType, setControlnetType] = useState('canny'); // Default ControlNet type
+  const [controlnetType, setControlnetType] = useState('depth'); // Default ControlNet type
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -146,9 +146,9 @@ const ImageGeneration = () => {
               onChange={(e) => setControlnetType(e.target.value)}
               className="w-full mt-4 p-2 border rounded-md"
             >
+              <option value="depth">Depth</option>
               <option value="canny">Canny</option>
               <option value="softedge">SoftEdge</option>
-              <option value="depth">Depth</option>
               <option value="openpose">OpenPose</option>
             </select>
           </div>
