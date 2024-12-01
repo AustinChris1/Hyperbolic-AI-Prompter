@@ -3,8 +3,6 @@ import cors from 'cors';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import fs from 'fs';
-import path from 'path';
 
 dotenv.config();
 
@@ -20,19 +18,24 @@ const client = new OpenAI({
 
 // Text Generation Endpoint
 app.post('/generate-text', async (req, res) => {
-  const { prompt } = req.body;
+  const { prompt, promptModel } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
   }
 
+  if (!promptModel) {
+    return res.status(400).json({ error: 'Model is required' });
+  }
+
+
   try {
     const response = await client.chat.completions.create({
       messages: [
-        { role: 'system', content: 'You are an expert travel guide.' },
+        // { role: 'system', content: 'You are an AI.' },
         { role: 'user', content: prompt },
       ],
-      model: 'meta-llama/Meta-Llama-3.1-70B-Instruct',
+      model: promptModel,
     });
 
     res.json({ response: response.choices[0].message.content });

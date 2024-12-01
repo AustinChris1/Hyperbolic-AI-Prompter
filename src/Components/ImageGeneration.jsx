@@ -63,8 +63,6 @@ const ImageGeneration = () => {
     }
 
     try {
-      console.log('Request Body:', requestBody); // Debug request body
-
       const res = await fetch('http://localhost:5000/generate-image', {
         method: 'POST',
         headers: {
