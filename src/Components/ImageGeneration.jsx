@@ -66,7 +66,11 @@ const ImageGeneration = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/generate-image', {
+      const baseUrl = process.env.NODE_ENV === 'production'
+        ? `https://${process.env.VERCEL_URL}/generate-image` // URL for production (Vercel)
+        : 'http://localhost:5000/generate-image';  // URL for local development
+
+      const res = await fetch(baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

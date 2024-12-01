@@ -33,7 +33,11 @@ const TextGeneration = () => {
     setResponse('');
 
     try {
-      const res = await fetch('http://localhost:5000/generate-text', {
+      const baseUrl = process.env.NODE_ENV === 'production'
+        ? `https://${process.env.VERCEL_URL}/generate-text` // URL for production (Vercel)
+        : 'http://localhost:5000/generate-text';  // URL for local development
+
+      const res = await fetch(baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,8 +132,8 @@ const TextGeneration = () => {
           onClick={handleGenerate}
           disabled={loading}
           className={`mt-4 w-full py-2 text-white rounded-md ${loading
-              ? 'bg-purple-300 cursor-not-allowed'
-              : 'bg-purple-500 hover:bg-purple-600'
+            ? 'bg-purple-300 cursor-not-allowed'
+            : 'bg-purple-500 hover:bg-purple-600'
             }`}
         >
           {loading ? 'Generating...' : 'Generate'}

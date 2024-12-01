@@ -20,7 +20,11 @@ const AudioGeneration = () => {
     setAudioUrl(null); // Reset previous audio URL
 
     try {
-      const res = await fetch('http://localhost:5000/generate-audio', {
+      const baseUrl = process.env.NODE_ENV === 'production'
+        ? `https://${process.env.VERCEL_URL}/generate-audio` // URL for production (Vercel)
+        : 'http://localhost:5000/generate-audio';  // URL for local development
+
+      const res = await fetch(baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -66,8 +70,8 @@ const AudioGeneration = () => {
           onClick={handleGenerate}
           disabled={loading}
           className={`mt-4 w-full py-2 text-white rounded-md ${loading
-              ? 'bg-purple-300 cursor-not-allowed'
-              : 'bg-purple-500 hover:bg-purple-600'
+            ? 'bg-purple-300 cursor-not-allowed'
+            : 'bg-purple-500 hover:bg-purple-600'
             }`}
         >
           {loading ? 'Generating...' : 'Generate'}

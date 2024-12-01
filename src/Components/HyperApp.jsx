@@ -60,7 +60,13 @@ const HyperbolicPromptGenerator = () => {
       </div>
       <footer className="bg-gray-800 text-white py-4 mt-8">
         <div className="container mx-auto text-center px-4">
-          <p className="text-lg font-semibold">Developed by Austin-Chris</p>
+          <p className="text-lg font-semibold">Developed by{' '}
+            <Link
+              to="https://github.com/AustinChris1/Hyperbolic-AI-Prompter"
+              className="text-gray-400 hover:text-gray-600"
+            >
+              Austin-Chris
+            </Link> </p>
           <p className="text-sm">
             Powered by{' '}
             <Link
