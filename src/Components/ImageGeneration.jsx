@@ -12,19 +12,22 @@ const ImageGeneration = () => {
     Paint_Splash: 0,
   });
   const [controlnetImage, setControlnetImage] = useState(null); // Store ControlNet image for processing
+  const [controlnetType, setControlnetType] = useState('canny'); // Default ControlNet type
 
-  // Handle image upload for ControlNet
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setControlnetImage(reader.result); // Store base64 image for ControlNet
+        // Strip the prefix (e.g., "data:image/jpeg;base64,")
+        const base64String = reader.result.replace(/^data:image\/\w+;base64,/, '');
+        setControlnetImage(base64String);
       };
       reader.readAsDataURL(file);
     }
   };
-
+  
+  // Generate image
   const handleGenerate = async () => {
     if (!prompt) {
       setError('Prompt cannot be empty');
@@ -42,7 +45,7 @@ const ImageGeneration = () => {
       backend: 'auto',
     };
 
-    // Handle LoRA specific request
+    // Handle LoRA-specific request
     if (generationMethod === 'lora') {
       const lora = {};
       Object.keys(loraEffects).forEach((effect) => {
@@ -55,10 +58,13 @@ const ImageGeneration = () => {
 
     // Handle ControlNet image if selected
     if (generationMethod === 'controlnet' && controlnetImage) {
-      requestBody.controlnetImage = controlnetImage;
+      requestBody.controlnet_image = controlnetImage;
+      requestBody.controlnet_name = controlnetType;
     }
 
     try {
+      console.log('Request Body:', requestBody); // Debug request body
+
       const res = await fetch('http://localhost:5000/generate-image', {
         method: 'POST',
         headers: {
@@ -125,6 +131,18 @@ const ImageGeneration = () => {
             {controlnetImage && (
               <div className="mt-2 text-sm text-gray-500">ControlNet Image Selected</div>
             )}
+
+            {/* Dropdown to select ControlNet type */}
+            <select
+              value={controlnetType}
+              onChange={(e) => setControlnetType(e.target.value)}
+              className="w-full mt-4 p-2 border rounded-md"
+            >
+              <option value="canny">Canny</option>
+              <option value="softedge">SoftEdge</option>
+              <option value="depth">Depth</option>
+              <option value="openpose">OpenPose</option>
+            </select>
           </div>
         )}
 

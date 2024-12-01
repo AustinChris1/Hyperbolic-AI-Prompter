@@ -2,13 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
-import axios from 'axios'; // Use axios for the image generation request
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // Increase JSON body size limit
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase URL-encoded body size limit
 
 const client = new OpenAI({
   apiKey: process.env.HYPERBOLIC_API_KEY,
@@ -26,14 +29,8 @@ app.post('/generate-text', async (req, res) => {
   try {
     const response = await client.chat.completions.create({
       messages: [
-        {
-          role: 'system',
-          content: 'You are an expert travel guide.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
+        { role: 'system', content: 'You are an expert travel guide.' },
+        { role: 'user', content: prompt },
       ],
       model: 'meta-llama/Meta-Llama-3.1-70B-Instruct',
     });
@@ -45,7 +42,34 @@ app.post('/generate-text', async (req, res) => {
   }
 });
 
-// Image Generation Endpoint
+// Text-to-Speech Generation Endpoint
+app.post('/generate-audio', async (req, res) => {
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ error: 'Text is required' });
+  }
+
+  try {
+    const response = await axios.post(
+      'https://api.hyperbolic.xyz/v1/audio/generation',
+      { text },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.HYPERBOLIC_API_KEY}`,
+        },
+      }
+    );
+
+    const base64Audio = response.data.audio;
+    res.json({ audio: base64Audio });
+  } catch (err) {
+    console.error('Audio API Error:', err.response?.data || err.message);
+    res.status(500).json({ error: err.response?.data || 'Failed to generate audio' });
+  }
+});
+
 app.post('/generate-image', async (req, res) => {
   const { prompt, height = 1024, width = 1024, controlnet_image, controlnet_name, lora } = req.body;
 
@@ -53,27 +77,38 @@ app.post('/generate-image', async (req, res) => {
     return res.status(400).json({ error: 'Prompt is required' });
   }
 
+  const encodedImage = controlnet_image;
+
+  // Default model
+  let model_name = 'SDXL1.0-base';
+
+  // Use ControlNet model if applicable
+  if (controlnet_image && controlnet_name) {
+    model_name = 'SDXL-ControlNet'; // Set model supporting ControlNet
+  }
+
   const requestBody = {
-    model_name: 'SDXL1.0-base',
+    model_name,
     prompt,
     height,
     width,
     backend: 'auto',
   };
 
-  // Handle ControlNet specific request
+  // Handle ControlNet-specific request
   if (controlnet_image && controlnet_name) {
     try {
-      // Ensure the image is encoded as base64 before passing to the API
-      const base64Image = await encodeImageToBase64(controlnet_image);  // assuming 'controlnet_image' is a URL or image path
+      // The image is already in Base64 format, so no need to read from a file
+      const base64Image = encodedImage.replace(/^data:image\/\w+;base64,/, ''); // Remove base64 prefix if present
       requestBody.controlnet_image = base64Image;
       requestBody.controlnet_name = controlnet_name;
     } catch (err) {
-      return res.status(500).json({ error: 'Failed to encode controlnet image' });
+      console.error('Error processing ControlNet image:', err);
+      return res.status(500).json({ error: 'Failed to process ControlNet image.' });
     }
   }
 
-  // Handle LoRA specific request
+  // Handle LoRA-specific request
   if (lora) {
     requestBody.lora = lora;
   }
@@ -95,49 +130,6 @@ app.post('/generate-image', async (req, res) => {
   } catch (err) {
     console.error('Image API Error:', err.response?.data || err.message);
     res.status(500).json({ error: err.response?.data || 'Failed to generate image' });
-  }
-});
-
-// Helper function to encode image to base64 (if needed)
-const encodeImageToBase64 = (imagePath) => {
-  return new Promise((resolve, reject) => {
-    const fs = require('fs');
-    fs.readFile(imagePath, (err, data) => {
-      if (err) reject(err);
-      resolve(data.toString('base64'));
-    });
-  });
-};
-
-// Text-to-Speech Generation Endpoint
-app.post('/generate-audio', async (req, res) => {
-  const { text } = req.body;
-
-  if (!text) {
-    return res.status(400).json({ error: 'Text is required' });
-  }
-
-  try {
-    // Request to the Hyperbolic API for audio generation
-    const response = await axios.post(
-      'https://api.hyperbolic.xyz/v1/audio/generation',
-      {
-        text,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.HYPERBOLIC_API_KEY}`,
-        },
-      }
-    );
-
-    // The API returns Base64 audio; decode and send back to client
-    const base64Audio = response.data.audio;
-    res.json({ audio: base64Audio });
-  } catch (err) {
-    console.error('Audio API Error:', err.response?.data || err.message);
-    res.status(500).json({ error: err.response?.data || 'Failed to generate audio' });
   }
 });
 
