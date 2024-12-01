@@ -67,7 +67,7 @@ const ImageGeneration = () => {
 
     try {
       const baseUrl = process.env.NODE_ENV === 'production'
-        ? `https://${process.env.VERCEL_URL}/generate-image` // URL for production (Vercel)
+        ? `https://hyperbolic-ai-prompter.onrender.com/generate-image` // URL for production (Vercel)
         : 'http://localhost:5000/generate-image';  // URL for local development
 
       const res = await fetch(baseUrl, {
