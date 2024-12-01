@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Importing the styles
 
 const AudioGeneration = () => {
   const [text, setText] = useState('');
@@ -9,6 +11,7 @@ const AudioGeneration = () => {
   const handleGenerate = async () => {
     if (!text) {
       setError('Text cannot be empty');
+      toast.error('Text cannot be empty');
       return;
     }
 
@@ -28,6 +31,7 @@ const AudioGeneration = () => {
       if (!res.ok) {
         const errorData = await res.json();
         setError(errorData.error || 'Failed to generate audio');
+        toast.error(errorData.error || 'Failed to generate audio');
       } else {
         const data = await res.json();
         const audioData = data.audio; // Base64 audio string
@@ -37,9 +41,11 @@ const AudioGeneration = () => {
         const audioUrl = URL.createObjectURL(audioBlob);
 
         setAudioUrl(audioUrl);
+        toast.success('Audio generated successfully!');
       }
     } catch (err) {
       setError('Failed to connect to the server');
+      toast.error('Failed to connect to the server');
     } finally {
       setLoading(false);
     }
@@ -59,11 +65,10 @@ const AudioGeneration = () => {
         <button
           onClick={handleGenerate}
           disabled={loading}
-          className={`mt-4 w-full py-2 text-white rounded-md ${
-            loading
+          className={`mt-4 w-full py-2 text-white rounded-md ${loading
               ? 'bg-purple-300 cursor-not-allowed'
               : 'bg-purple-500 hover:bg-purple-600'
-          }`}
+            }`}
         >
           {loading ? 'Generating...' : 'Generate'}
         </button>
@@ -78,6 +83,8 @@ const AudioGeneration = () => {
           </div>
         )}
       </div>
+      {/* ToastContainer for notifications */}
+      <ToastContainer />
     </div>
   );
 };

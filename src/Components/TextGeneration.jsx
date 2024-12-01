@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Importing the styles
 
 const models = [
   { value: 'Qwen/QwQ-32B-Preview', label: 'QwQ-32B-Preview', description: 'Best for general-purpose reasoning tasks.' },
@@ -42,32 +44,39 @@ const TextGeneration = () => {
       if (!res.ok) {
         const errorData = await res.json();
         setError(errorData.error || 'Failed to generate text');
+        toast.error(errorData.error || 'Failed to generate text');
       } else {
         const data = await res.json();
         setResponse(data.response);
+        toast.success('Text generated successfully!');
       }
     } catch (err) {
       setError('Failed to connect to the server');
+      toast.error('Failed to connect to the server');
     } finally {
       setLoading(false);
     }
   };
+
   // Function to copy the code block
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => {
-      alert('Code copied to clipboard!');
+      toast.success('Code copied to clipboard!');
     });
   };
 
   // Function to render response with highlighted code
   const renderResponse = (responseText) => {
-    // Regex to find code blocks (enclosed in backticks)
+    // Regex to find code blocks (enclosed in backticks) and bold text (enclosed in **)
     const codeRegex = /`{3}([^`]+)`{3}/g;
+    const boldRegex = /\*\*([^*]+)\*\*/g;
+
+    // Split the response by code blocks and bold texts
     const parts = responseText.split(codeRegex);
 
     return parts.map((part, index) => {
       if (index % 2 === 0) {
-        return part; // Regular text
+        return <span key={index}>{part}</span>; // Regular text
       } else {
         // Render code block with styles
         return (
@@ -131,9 +140,13 @@ const TextGeneration = () => {
             <h2 className="text-lg font-semibold text-gray-800">Response:</h2>
             <div className="mt-2 text-gray-700 whitespace-pre-line">
               {renderResponse(response)}
-            </div>          </div>
+            </div>
+          </div>
         )}
       </div>
+
+      {/* ToastContainer for notifications */}
+      <ToastContainer />
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Importing the styles
 
 const ImageGeneration = () => {
   const [prompt, setPrompt] = useState('');
@@ -26,11 +28,12 @@ const ImageGeneration = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   // Generate image
   const handleGenerate = async () => {
     if (!prompt) {
       setError('Prompt cannot be empty');
+      toast.error('Prompt cannot be empty');
       return;
     }
 
@@ -74,12 +77,15 @@ const ImageGeneration = () => {
       if (!res.ok) {
         const errorData = await res.json();
         setError(errorData.error || 'Failed to generate image');
+        toast.error(errorData.error || 'Failed to generate image');
       } else {
         const data = await res.json();
         setImage(data.image); // Set the Base64 image string
+        toast.success('Image generated successfully!');
       }
     } catch (err) {
       setError('Failed to connect to the server');
+      toast.error('Failed to connect to the server');
     } finally {
       setLoading(false);
     }
@@ -105,7 +111,7 @@ const ImageGeneration = () => {
           placeholder="Enter your prompt here..."
           className="w-full h-32 p-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
         />
-        
+
         {/* Dropdown for selecting generation method */}
         <select
           value={generationMethod}
@@ -186,6 +192,9 @@ const ImageGeneration = () => {
           </div>
         )}
       </div>
+      {/* ToastContainer for notifications */}
+      <ToastContainer />
+
     </div>
   );
 };
