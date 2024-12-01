@@ -53,7 +53,7 @@ const AudioGeneration = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 py-8 px-4">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">AI Audio Generator</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">Audio Generator</h1>
 
       <div className="w-full max-w-2xl bg-white shadow-md rounded-lg p-6">
         <textarea

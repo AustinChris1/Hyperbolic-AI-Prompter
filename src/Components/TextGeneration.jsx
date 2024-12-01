@@ -3,9 +3,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Importing the styles
 
 const models = [
+  { value: 'meta-llama/Llama-3.2-3B-Instruct', label: 'Llama-3.2-3B', description: 'Instruction-tuned for a variety of tasks with a smaller size.' },
   { value: 'Qwen/QwQ-32B-Preview', label: 'QwQ-32B-Preview', description: 'Best for general-purpose reasoning tasks.' },
   { value: 'Qwen/Qwen2.5-Coder-32B-Instruct', label: 'Qwen2.5-Coder-32B', description: 'Best for coding and math-related tasks.' },
-  { value: 'meta-llama/Llama-3.2-3B-Instruct', label: 'Llama-3.2-3B', description: 'Instruction-tuned for a variety of tasks with a smaller size.' },
   { value: 'Qwen/Qwen2.5-72B-Instruct', label: 'Qwen2.5-72B', description: 'Best for advanced coding and math tasks with higher knowledge.' },
   { value: 'deepseek-ai/DeepSeek-V2.5', label: 'DeepSeek-V2.5', description: 'Best for merging chat and coding capabilities.' },
   { value: 'meta-llama/Meta-Llama-3-70B-Instruct', label: 'Llama-3-70B', description: 'Highly efficient and powerful for multiple tasks.' },
@@ -98,7 +98,7 @@ const TextGeneration = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 py-8 px-4">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">AI Text Generator</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">Text Generator</h1>
 
       <div className="w-full max-w-2xl bg-white shadow-md rounded-lg p-6">
         <div className="mb-4">
