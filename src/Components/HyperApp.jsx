@@ -67,7 +67,7 @@ const HyperbolicPromptGenerator = () => {
               to="https://docs.hyperbolic.xyz/docs/getting-started"
               className="text-purple-400 hover:text-purple-600"
             >
-              Hyperbolic
+              Hyperbolic Labs
             </Link>
           </p>
         </div>
