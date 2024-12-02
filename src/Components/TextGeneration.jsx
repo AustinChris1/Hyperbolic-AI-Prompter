@@ -34,7 +34,7 @@ const TextGeneration = () => {
 
     try {
       const baseUrl = process.env.NODE_ENV === 'production'
-        ? `https://hyperbolic-ai-prompter.onrender.com/generate-text` // URL for production (Vercel)
+        ? `https://backend-austinchris-projects.vercel.app/generate-text` // URL for production (Vercel)
         : 'http://localhost:5000/generate-text';  // URL for local development
 
       const res = await fetch(baseUrl, {

@@ -96,6 +96,9 @@ app.post('/generate-image', async (req, res) => {
     height,
     width,
     backend: 'auto',
+    "cfg_scale": 20,
+    "strength" : 0.8,
+    "seed": 5742320,
   };
 
   // Handle ControlNet-specific request

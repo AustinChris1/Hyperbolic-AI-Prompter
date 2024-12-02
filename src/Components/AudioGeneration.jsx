@@ -21,7 +21,7 @@ const AudioGeneration = () => {
 
     try {
       const baseUrl = process.env.NODE_ENV === 'production'
-        ? `https://hyperbolic-ai-prompter.onrender.com/generate-audio` // URL for production (Vercel)
+        ? `https://backend-austinchris-projects.vercel.app/generate-audio` // URL for production (Vercel)
         : 'http://localhost:5000/generate-audio';  // URL for local development
 
       const res = await fetch(baseUrl, {

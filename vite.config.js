@@ -7,13 +7,4 @@ export default defineConfig({
   build: {
     outDir: 'dist', // Build output directory for production
   },
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://hyperbolic-ai-prompter.onrender.com', // Render backend URL
-        changeOrigin: true,
-        secure: false, // Use true if HTTPS is properly configured on your backend
-      },
-    },
-  },
 });
