@@ -74,7 +74,7 @@ app.post('/generate-audio', async (req, res) => {
 });
 
 app.post('/generate-image', async (req, res) => {
-  const { prompt, height = 1024, width = 1024, controlnet_image, controlnet_name, lora } = req.body;
+  const { prompt, height = 1024, width = 1024, controlnet_image, controlnet_name, lora, cfg_scale, strength, seed, } = req.body;
 
   if (!prompt) {
     return res.status(400).json({ error: 'Prompt is required' });
@@ -96,9 +96,6 @@ app.post('/generate-image', async (req, res) => {
     height,
     width,
     backend: 'auto',
-    "cfg_scale": 20,
-    "strength" : 0.8,
-    "seed": 5742320,
   };
 
   // Handle ControlNet-specific request
@@ -108,6 +105,9 @@ app.post('/generate-image', async (req, res) => {
       const base64Image = encodedImage.replace(/^data:image\/\w+;base64,/, ''); // Remove base64 prefix if present
       requestBody.controlnet_image = base64Image;
       requestBody.controlnet_name = controlnet_name;
+      requestBody.cfg_scale = Math.floor(Math.random() * (50 - 1 + 1)) + 1;
+      requestBody.strength = Math.random();
+      requestBody.seed = Math.floor(Math.random() * (5800000 - 5200000 + 1)) + 5200000;
     } catch (err) {
       console.error('Error processing ControlNet image:', err);
       return res.status(500).json({ error: 'Failed to process ControlNet image.' });
